@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Sheets to HTML Table</title>
+    <script src="./xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+    <style>
+        tr {
+            background-color: white;
+        }
+        
+        tr:nth-child(2n) {
+            background-color: lightgray;
+        }
+    </style>
+</head>
+ 
+<body>
+
+<input type="button" onclick="export_data()" value="Export">
+   <table class= "table" id = "data"> </table>
+
+    <script>
+        let table = document.querySelector(".table");
+        (
+            async() => {
+                let workbook = XLSX.read(await (await fetch("https://5kmlwk.sharepoint.com/sites/test2/Shared%20Documents/dafiles/data1.xlsx")).arrayBuffer());
+                console.log(workbook);
+                let worksheet = workbook.SheetNames;
+                worksheet.forEach(name => {
+                    let html = XLSX.utils.sheet_to_html(workbook.Sheets[name]);
+                    table.innerHTML += `
+                    <h3>${name}</h3>${html}
+                    `;
+                  
+                })
+                   let workbook1 = XLSX.read(await (await fetch("./excel1.xlsx")).arrayBuffer());
+                console.log(workbook1);
+                let worksheet1 = workbook1.SheetNames;
+                 worksheet1.forEach(name => {
+                    let html = XLSX.utils.sheet_to_html(workbook1.Sheets[name]);
+                    table.innerHTML += `
+                    <h3>${name}</h3>${html}
+                    `;
+                  
+                })
+            }
+        )()
+
+        function export_data(){
+	let data=document.getElementById('data');
+    let text = String.fromCharCode(65, 110, 107, 105, 116);
+	var fp=XLSX.utils.table_to_book(data,{sheet:[text]});
+	XLSX.write(fp,{
+		bookType:'xlsx',
+		type:'base64'
+	});
+	XLSX.writeFile(fp, 'append.xlsx');
+}
+    </script>
+</body>
+ 
+</html>
